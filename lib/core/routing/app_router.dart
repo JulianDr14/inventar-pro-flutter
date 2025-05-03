@@ -9,6 +9,10 @@ class AppRouter {
         path: '/',
         builder: (context, state) => const LoginPage(),
       ),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => const HomePage(),
+      ),
     ],
     errorBuilder: (context, state) => const ErrorScreen(),
   );

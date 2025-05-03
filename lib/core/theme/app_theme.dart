@@ -6,7 +6,6 @@ class AppTheme {
   static const Color greenDarker = Color(0xff286045);
   static const Color greyBg = Color(0xFFF2F4F5);
 
-
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     textTheme: GoogleFonts.figtreeTextTheme().copyWith(
