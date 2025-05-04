@@ -29,9 +29,12 @@ class ProductListContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ProductListState state = ref.watch(productListViewModelProvider);
-    final List<Product> products = state.products
-        .where((p) => p.name.toLowerCase().contains(searchQuery.toLowerCase()))
-        .toList();
+    final List<Product> products =
+        state.products
+            .where(
+              (p) => p.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
 
     if (state.loading) {
       return const Center(child: CircularProgressIndicator());
@@ -51,7 +54,6 @@ class ProductListContent extends ConsumerWidget {
           key: ValueKey(p.id),
           confirmDismiss: (direction) async {
             final bool? shouldDelete = await ConfirmDeleteDialog.show(context);
-
             if (shouldDelete == true) {
               onDelete(p.id, false);
               return true;
@@ -62,14 +64,39 @@ class ProductListContent extends ConsumerWidget {
           secondaryBackground: backgroundDismissible(context),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+              backgroundColor: Theme.of(
+                context,
+              ).primaryColor.withValues(alpha: 0.1),
               child: Text(
-                '${p.quantity}',
-                style: TextStyle(color: Theme.of(context).primaryColor),
+                p.name.substring(0, 1).toUpperCase(),
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             title: Text(p.name),
-            subtitle: Text('ID: ${p.id}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  spacing: 10,
+                  children: [
+                    const Icon(Icons.qr_code, size: 16),
+                    Text('${p.id}'),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  spacing: 10,
+                  children: [
+                    const Icon(Icons.inventory_2, size: 16),
+                    Text('${p.quantity}'),
+                  ],
+                ),
+              ],
+            ),
             trailing: PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert),
               onSelected: (value) {
@@ -79,24 +106,33 @@ class ProductListContent extends ConsumerWidget {
                   onDelete(p.id, true);
                 }
               },
-              itemBuilder: (_) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(children: [
-                    Icon(Icons.create_outlined, size: 16),
-                    SizedBox(width: 8),
-                    Text('Editar'),
-                  ]),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(children: [
-                    Icon(Icons.delete_outline_rounded,
-                        size: 16, color: Colors.red),
-                    Text('Eliminar', style: TextStyle(color: Colors.red)),
-                  ]),
-                ),
-              ],
+              itemBuilder:
+                  (_) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          Icon(Icons.create_outlined, size: 16),
+                          Text('Editar'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          Icon(
+                            Icons.delete_outline_rounded,
+                            size: 16,
+                            color: Colors.red,
+                          ),
+                          Text('Eliminar', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
+                  ],
             ),
           ),
         );
