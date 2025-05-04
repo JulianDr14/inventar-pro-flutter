@@ -5,6 +5,7 @@ class AppTheme {
   static const Color green = Color(0xFF43946D);
   static const Color greenDarker = Color(0xff286045);
   static const Color greyBg = Color(0xFFF2F4F5);
+  static const Color greyHint = Color(0xFF9E9E9E);
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -14,7 +15,6 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-
       bodyMedium: GoogleFonts.figtree(
         fontSize: 14,
         color: Colors.black54,
@@ -41,6 +41,11 @@ class AppTheme {
         fontWeight: FontWeight.bold,
       ),
     ),
+    dividerTheme: const DividerThemeData(
+      color: greyHint,
+      thickness: 1.0,
+      space: 16.0,
+    ),
     cardTheme: const CardTheme(
       color: Colors.white,
       elevation: 4,
@@ -50,7 +55,7 @@ class AppTheme {
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Colors.black,
+      backgroundColor: green,
       foregroundColor: Colors.white,
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -66,6 +71,19 @@ class AppTheme {
         ),
       ),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        textStyle: GoogleFonts.figtree(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      )
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
@@ -78,19 +96,14 @@ class AppTheme {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.0),
-        borderSide: const BorderSide(
-          color: Colors.grey,
-        ),
+        borderSide: const BorderSide(color: Colors.grey),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.0),
-        borderSide: const BorderSide(
-          width: 2.0,
-          color: green,
-        ),
+        borderSide: const BorderSide(width: 2.0, color: green),
       ),
       hintStyle: const TextStyle(
-        color: Colors.black54,
+        color: Colors.grey,
       ),
     ),
     navigationRailTheme: NavigationRailThemeData(
@@ -102,7 +115,7 @@ class AppTheme {
       unselectedLabelTextStyle: const TextStyle(
         color: Colors.black54,
       ),
-      indicatorColor: Colors.blue.withValues(alpha: 0.5),
+      indicatorColor: green.withValues(alpha: 0.5),
     ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: green,
