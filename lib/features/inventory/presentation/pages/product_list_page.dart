@@ -47,58 +47,49 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inventario'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: TextField(
-              controller: _searchCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Buscar producto...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: TextField(
+                controller: _searchCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Buscar producto...',
+                  prefixIcon: Icon(Icons.search),
+                ),
+                onChanged: (_) => setState(() {}),
               ),
-              onChanged: (_) => setState(() {}),
             ),
-          ),
+            Expanded(
+              child: ProductListContent(
+                searchQuery: _searchCtrl.text,
+                onEdit: (id) {
+                  final product = ref
+                      .read(productListViewModelProvider)
+                      .products
+                      .firstWhere((p) => p.id == id);
+                  _showProductForm(product: product);
+                },
+                onDelete: (int id, bool fromMenu) async {
+                  bool shouldDelete = true;
+                  if (fromMenu) {
+                    shouldDelete =
+                        await ConfirmDeleteDialog.show(context) ?? false;
+                  }
+                  if (shouldDelete) {
+                    await ref
+                        .read(productListViewModelProvider.notifier)
+                        .deleteProduct(id);
+                    if (!context.mounted) return;
+                    SnackbarService.show(
+                        context, message: 'Producto eliminado');
+                  }
+                },
+              ),
+            ),
+          ],
         ),
-      ),
-      body: ProductListContent(
-        searchQuery: _searchCtrl.text,
-        onEdit: (id) {
-          final product = ref
-              .read(productListViewModelProvider)
-              .products
-              .firstWhere((p) => p.id == id);
-          _showProductForm(product: product);
-        },
-        onDelete: (int id, bool showDialog) async {
-          bool shouldDelete = true;
-
-          if (showDialog) {
-            // Si viene del menú ("Eliminar"), mostramos el diálogo de confirmación
-            shouldDelete = await ConfirmDeleteDialog.show(context) ?? false;
-          } else {
-            // Si viene del swipe, ya se confirmó en `confirmDismiss`,
-            // así que no hace falta volver a preguntar.
-            shouldDelete = true;
-          }
-
-          if (shouldDelete) {
-            await ref
-                .read(productListViewModelProvider.notifier)
-                .deleteProduct(id);
-
-            if (!context.mounted) return;
-
-            SnackbarService.show(
-              context,
-              message: 'Producto eliminado',
-            );
-          }
-        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showProductForm(),
