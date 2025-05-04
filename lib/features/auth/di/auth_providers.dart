@@ -1,23 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intentary_pro/core/database/sqlite_database.dart';
+import 'package:intentary_pro/core/di/core_providers.dart';
 import 'package:intentary_pro/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:intentary_pro/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:intentary_pro/features/auth/domain/usecases/login_usecase.dart';
 import 'package:intentary_pro/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 
-// 1. Proveedor de la DB singleton
-final sqliteDbProvider = Provider<SqliteDatabase>((ref) {
-  return SqliteDatabase();
-});
-
-// 2. Proveedor del DataSource local
+// 1. Proveedor del DataSource local
 final authLocalDataSourceProvider =
 Provider<AuthLocalDataSource>((ref) {
   final db = ref.read(sqliteDbProvider);
   return AuthLocalDataSourceImpl(db);
 });
 
-// 3. Proveedor del repositorio de Auth
+// 2. Proveedor del repositorio de Auth
 final authRepositoryProvider =
 Provider<AuthRepositoryImpl>((ref) {
   final local = ref.read(authLocalDataSourceProvider);
