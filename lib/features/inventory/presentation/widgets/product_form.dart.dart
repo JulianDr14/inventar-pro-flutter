@@ -110,10 +110,13 @@ class _ProductFormState extends ConsumerState<ProductForm> {
                 label: Text(isEdit ? 'Guardar cambios' : 'Guardar producto'),
               ),
             ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+            const Divider(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancelar'),
+              ),
             ),
             const SizedBox(height: 8),
           ]),
