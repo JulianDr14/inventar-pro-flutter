@@ -4,7 +4,7 @@ import 'package:intentary_pro/core/services/snackbar_service.dart';
 import 'package:intentary_pro/features/inventory/di/inventory_providers.dart';
 import 'package:intentary_pro/features/inventory/domain/entities/product.dart';
 import 'package:intentary_pro/features/inventory/presentation/dialogs/confirm_delete_dialog.dart';
-import 'package:intentary_pro/features/inventory/presentation/widgets/product_form.dart.dart';
+import 'package:intentary_pro/features/inventory/presentation/widgets/product_form.dart';
 import 'package:intentary_pro/features/inventory/presentation/widgets/product_list_content.dart';
 
 class ProductListPage extends ConsumerStatefulWidget {
@@ -74,14 +74,24 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
               .firstWhere((p) => p.id == id);
           _showProductForm(product: product);
         },
-        onDelete: (id) async {
-          final shouldDelete = await ConfirmDeleteDialog.show(context);
-          if (shouldDelete == true) {
+        onDelete: (int id, bool showDialog) async {
+          bool shouldDelete = true;
+
+          if (showDialog) {
+            // Si viene del menú ("Eliminar"), mostramos el diálogo de confirmación
+            shouldDelete = await ConfirmDeleteDialog.show(context) ?? false;
+          } else {
+            // Si viene del swipe, ya se confirmó en `confirmDismiss`,
+            // así que no hace falta volver a preguntar.
+            shouldDelete = true;
+          }
+
+          if (shouldDelete) {
             await ref
                 .read(productListViewModelProvider.notifier)
                 .deleteProduct(id);
 
-            if(!context.mounted) return;
+            if (!context.mounted) return;
 
             SnackbarService.show(
               context,
