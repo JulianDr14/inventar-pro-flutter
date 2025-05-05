@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intentary_pro/core/widgets/theme_toggle_button.dart';
 import 'package:intentary_pro/features/inventory/presentation/pages/product_list_page.dart';
 import 'package:intentary_pro/features/movements/presentation/pages/movements_list_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   int _selectedIndex = 0;
 
   static const List<_NavItem> _items = <_NavItem>[
@@ -19,11 +21,7 @@ class _HomePageState extends State<HomePage> {
       icon: Icons.list_alt,
       page: ProductListPage(),
     ),
-    _NavItem(
-      title: 'Ordenes',
-      icon: Icons.settings,
-      page: MovementsListPage(),
-    ),
+    _NavItem(title: 'Órdenes', icon: Icons.settings, page: MovementsListPage()),
   ];
 
   @override
@@ -31,7 +29,10 @@ class _HomePageState extends State<HomePage> {
     final Color primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      appBar: AppBar(title: Text(_items[_selectedIndex].title)),
+      appBar: AppBar(
+        title: Text(_items[_selectedIndex].title),
+        actions: const [ThemeToggleButton()],
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

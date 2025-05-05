@@ -17,6 +17,8 @@ class ProductListContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     final List<Product> products = ref.watch(
       sharedProductListProvider.select((s) => s.products),
     );
@@ -62,11 +64,15 @@ class ProductListContent extends ConsumerWidget {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor:
-                Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                isDark
+                    ? Theme.of(context).primaryColor.withValues(alpha: 0.5)
+                    : Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 child: Text(
                   p.name[0].toUpperCase(),
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: isDark
+                        ? Colors.white
+                        : Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -83,7 +89,7 @@ class ProductListContent extends ConsumerWidget {
                 ],
               ),
               trailing: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
+                icon: const Icon(Icons.more_horiz),
                 onSelected: (value) {
                   if (value == 'edit') {
                     onEdit(p.id);
