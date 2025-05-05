@@ -117,3 +117,12 @@ intl: ^0.19.0
 - Visualización del inventario
 - Registro de entradas/salidas
 - Manejo de errores con pantalla dedicada
+
+## 🔐 Usuario de Prueba
+
+Para acceder a la aplicación inicialmente, puedes usar las siguientes credenciales predeterminadas:
+
+- Usuario: admin
+- Contraseña: admin123
+  
+Estas credenciales están pensadas para propósitos de prueba.
