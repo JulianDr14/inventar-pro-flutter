@@ -46,7 +46,10 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
             },
           ),
         ),
-      );
+      ).whenComplete(() {
+        if (!context.mounted) return;
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+      });
     }
 
     return Scaffold(

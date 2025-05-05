@@ -25,7 +25,10 @@ class _MovementsListPageState extends ConsumerState<MovementsListPage> {
             ),
             child: const MovementForm(),
           ),
-    );
+    ).whenComplete(() {
+      if (!context.mounted) return;
+      WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+    });
   }
 
   @override

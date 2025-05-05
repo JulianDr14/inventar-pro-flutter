@@ -42,85 +42,88 @@ class ProductListContent extends ConsumerWidget {
       return const Center(child: Text('No se encontraron productos'));
     }
 
-    return ListView.builder(
-      itemCount: filtered.length,
-      itemBuilder: (_, i) {
-        final p = filtered[i];
-        return Dismissible(
-          key: ValueKey(p.id),
-          confirmDismiss: (direction) async {
-            final ok = await ConfirmDeleteDialog.show(context);
-            if (ok == true) {
-              onDelete(p.id, false);
-            }
-            return ok;
-          },
-          background: _backgroundDismissible(context),
-          secondaryBackground: _backgroundDismissible(context),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor:
-              Theme.of(context).primaryColor.withValues(alpha: 0.1),
-              child: Text(
-                p.name[0].toUpperCase(),
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () => WidgetsBinding.instance.focusManager.primaryFocus?.unfocus(),
+      child: ListView.builder(
+        itemCount: filtered.length,
+        itemBuilder: (_, i) {
+          final p = filtered[i];
+          return Dismissible(
+            key: ValueKey(p.id),
+            confirmDismiss: (direction) async {
+              final ok = await ConfirmDeleteDialog.show(context);
+              if (ok == true) {
+                onDelete(p.id, false);
+              }
+              return ok;
+            },
+            background: _backgroundDismissible(context),
+            secondaryBackground: _backgroundDismissible(context),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor:
+                Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                child: Text(
+                  p.name[0].toUpperCase(),
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            title: Text(p.name),
-            subtitle: Row(
-              spacing: 10,
-              children: [
-                const Icon(Icons.qr_code, size: 16),
-                Text('${p.id}'),
-                const SizedBox(width: 16),
-                const Icon(Icons.inventory_2, size: 16),
-                Text('${p.quantity}'),
-              ],
-            ),
-            trailing: PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert),
-              onSelected: (value) {
-                if (value == 'edit') {
-                  onEdit(p.id);
-                } else if (value == 'delete') {
-                  onDelete(p.id, true);
-                }
-              },
-              itemBuilder: (_) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Icon(Icons.create_outlined, size: 16),
-                      Text('Editar'),
-                    ],
+              title: Text(p.name),
+              subtitle: Row(
+                spacing: 10,
+                children: [
+                  const Icon(Icons.qr_code, size: 16),
+                  Text('${p.id}'),
+                  const SizedBox(width: 16),
+                  const Icon(Icons.inventory_2, size: 16),
+                  Text('${p.quantity}'),
+                ],
+              ),
+              trailing: PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    onEdit(p.id);
+                  } else if (value == 'delete') {
+                    onDelete(p.id, true);
+                  }
+                },
+                itemBuilder: (_) => [
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        Icon(Icons.create_outlined, size: 16),
+                        Text('Editar'),
+                      ],
+                    ),
                   ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Icon(
-                        Icons.delete_outline_rounded,
-                        size: 16,
-                        color: Colors.red,
-                      ),
-                      Text('Eliminar',
-                          style: TextStyle(color: Colors.red),
-                      ),
-                    ],
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        Icon(
+                          Icons.delete_outline_rounded,
+                          size: 16,
+                          color: Colors.red,
+                        ),
+                        Text('Eliminar',
+                            style: TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
