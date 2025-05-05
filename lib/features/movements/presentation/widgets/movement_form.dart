@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intentary_pro/core/di/core_providers.dart';
 import 'package:intentary_pro/core/services/snackbar_service.dart';
-import 'package:intentary_pro/features/inventory/di/inventory_providers.dart';
 import 'package:intentary_pro/features/inventory/domain/entities/product.dart';
-import 'package:intentary_pro/features/inventory/presentation/viewmodel/product_list_viewmodel.dart';
 import 'package:intentary_pro/features/movements/di/movements_providers.dart';
 import 'package:intentary_pro/features/movements/domain/entities/inventory_movement.dart';
-import 'package:intentary_pro/features/movements/presentation/viewmodel/movement_list_view_model.dart';
 
 class MovementForm extends ConsumerStatefulWidget {
   const MovementForm({super.key});
@@ -30,30 +28,21 @@ class _MovementFormState extends ConsumerState<MovementForm> {
 
   @override
   Widget build(BuildContext context) {
-    final ProductListState productState = ref.watch(
-      productListViewModelProvider,
-    );
-    final ProductListViewModel productVM = ref.read(
-      productListViewModelProvider.notifier,
-    );
+    final sharedState = ref.watch(sharedProductListProvider);
+    final movementVM = ref.read(movementListViewModelProvider.notifier);
 
-    final MovementListViewModel movementVM = ref.read(
-      movementListViewModelProvider.notifier,
-    );
-
-    final List<Product> products = productState.products;
-    final bool loading = productState.loading;
-    final String? error = productState.error;
+    final products = sharedState.products;
+    final loading = sharedState.loading;
+    final error = sharedState.error;
 
     final Product? selectedProduct =
-        _selectedProductId != null
-            ? products.firstWhere((p) => p.id == _selectedProductId)
-            : null;
+    _selectedProductId != null
+        ? products.firstWhere((p) => p.id == _selectedProductId)
+        : null;
     final int qty = int.tryParse(_qtyCtrl.text) ?? 0;
-
     final bool showSummary = selectedProduct != null && qty > 0;
 
-    void saveMovement() async {
+    Future<void> saveMovement() async {
       if (!_formKey.currentState!.validate()) return;
 
       await movementVM.addMovement(
@@ -64,7 +53,7 @@ class _MovementFormState extends ConsumerState<MovementForm> {
           createdAt: DateTime.now(),
         ),
       );
-      await productVM.loadProducts();
+      await ref.read(sharedProductListProvider.notifier).loadProducts();
       if (!context.mounted) return;
       SnackbarService.show(
         context,
@@ -100,13 +89,13 @@ class _MovementFormState extends ConsumerState<MovementForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    spacing: 8,
                     children: [
                       Icon(
                         Icons.add_circle_outline,
                         color: Theme.of(context).colorScheme.primary,
                         size: 28,
                       ),
-                      const SizedBox(width: 8),
                       Text(
                         'Registrar movimiento',
                         style: Theme.of(context).textTheme.titleLarge,
@@ -116,18 +105,12 @@ class _MovementFormState extends ConsumerState<MovementForm> {
                   const SizedBox(height: 16),
                   DropdownButtonFormField<int>(
                     value: _selectedProductId,
-                    items:
-                        products
-                            .map(
-                              (p) => DropdownMenuItem(
-                                value: p.id,
-                                child: Text('${p.name} (stock: ${p.quantity})'),
-                              ),
-                            )
-                            .toList(),
+                    items: products.map((p) => DropdownMenuItem(
+                      value: p.id,
+                      child: Text('${p.name} (stock: ${p.quantity})'),
+                    )).toList(),
                     decoration: const InputDecoration(labelText: 'Producto'),
-                    validator:
-                        (v) => v == null ? 'Selecciona un producto' : null,
+                    validator: (v) => v == null ? 'Selecciona un producto' : null,
                     onChanged: (v) => setState(() => _selectedProductId = v),
                   ),
                   const SizedBox(height: 12),
@@ -137,45 +120,43 @@ class _MovementFormState extends ConsumerState<MovementForm> {
                   ),
                   const SizedBox(height: 8),
                   Row(
+                    spacing: 16,
                     children: [
                       Expanded(
                         child: FilledButton.icon(
-                          onPressed:
-                              () => setState(
+                          onPressed: () => setState(
                                 () => _selectedType = MovementType.incoming,
-                              ),
+                          ),
                           icon: const Icon(Icons.arrow_circle_up_outlined),
                           label: const Text('Entrada'),
                           style: FilledButton.styleFrom(
                             backgroundColor:
-                                _selectedType == MovementType.incoming
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Colors.white,
+                            _selectedType == MovementType.incoming
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.white,
                             foregroundColor:
-                                _selectedType == MovementType.incoming
-                                    ? Colors.white
-                                    : Theme.of(context).colorScheme.onSurface,
+                            _selectedType == MovementType.incoming
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
                       Expanded(
                         child: FilledButton.icon(
-                          onPressed:
-                              () => setState(
+                          onPressed: () => setState(
                                 () => _selectedType = MovementType.outgoing,
-                              ),
+                          ),
                           icon: const Icon(Icons.arrow_circle_down_outlined),
                           label: const Text('Salida'),
                           style: FilledButton.styleFrom(
                             backgroundColor:
-                                _selectedType == MovementType.outgoing
-                                    ? Colors.red
-                                    : Colors.white,
+                            _selectedType == MovementType.outgoing
+                                ? Colors.red
+                                : Colors.white,
                             foregroundColor:
-                                _selectedType == MovementType.outgoing
-                                    ? Colors.white
-                                    : Theme.of(context).colorScheme.onSurface,
+                            _selectedType == MovementType.outgoing
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -221,7 +202,8 @@ class _MovementFormState extends ConsumerState<MovementForm> {
                           Text('Producto: ${selectedProduct.name}'),
                           Text('Cantidad: $qty'),
                           Text(
-                            'Nueva cantidad: ${_selectedType == MovementType.incoming ? selectedProduct.quantity + qty : selectedProduct.quantity - qty}',
+                            'Nueva cantidad: ${_selectedType == MovementType.incoming ? selectedProduct.quantity +
+                                qty : selectedProduct.quantity - qty}',
                           ),
                         ],
                       ),

@@ -39,16 +39,11 @@ final upgradeProductUseCaseProvider = Provider<UpgradeProductUsecase>((ref) {
   return UpgradeProductUsecase(repo);
 });
 
-final productListViewModelProvider =
-StateNotifierProvider<ProductListViewModel, ProductListState>((ref) {
-  final getProducts = ref.read(getProductsUseCaseProvider);
-  final addProduct = ref.read(addProductUseCaseProvider);
-  final upgradeProduct = ref.read(upgradeProductUseCaseProvider);
-  final deleteProduct = ref.read(deleteProductUseCaseProvider);
-  return ProductListViewModel(
-    getProducts,
-    addProduct,
-    upgradeProduct,
-    deleteProduct,
-  );
+final searchQueryProvider = StateProvider<String>((_) => '');
+
+final productListViewModelProvider = Provider<ProductListViewModel>((ref) {
+  final add   = ref.read(addProductUseCaseProvider);
+  final update = ref.read(upgradeProductUseCaseProvider);
+  final del    = ref.read(deleteProductUseCaseProvider);
+  return ProductListViewModel(add, update, del, ref);
 });
