@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intentary_pro/core/services/snackbar_service.dart';
 import 'package:intentary_pro/features/inventory/di/inventory_providers.dart';
 import 'package:intentary_pro/features/inventory/domain/entities/product.dart';
 import 'package:intentary_pro/features/inventory/presentation/viewmodel/product_list_viewmodel.dart';
@@ -51,6 +52,26 @@ class _MovementFormState extends ConsumerState<MovementForm> {
     final int qty = int.tryParse(_qtyCtrl.text) ?? 0;
 
     final bool showSummary = selectedProduct != null && qty > 0;
+
+    void saveMovement() async {
+      if (!_formKey.currentState!.validate()) return;
+
+      await movementVM.addMovement(
+        InventoryMovement(
+          productId: _selectedProductId!,
+          type: _selectedType,
+          quantity: qty,
+          createdAt: DateTime.now(),
+        ),
+      );
+      await productVM.loadProducts();
+      if (!context.mounted) return;
+      SnackbarService.show(
+        context,
+        message: 'Movimiento registrado correctamente',
+      );
+      context.pop();
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -209,21 +230,7 @@ class _MovementFormState extends ConsumerState<MovementForm> {
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(
-                      onPressed: () async {
-                        if (!_formKey.currentState!.validate()) return;
-
-                        await movementVM.addMovement(
-                          InventoryMovement(
-                            productId: _selectedProductId!,
-                            type: _selectedType,
-                            quantity: qty,
-                            createdAt: DateTime.now(),
-                          ),
-                        );
-                        await productVM.loadProducts();
-                        if (!context.mounted) return;
-                        context.pop();
-                      },
+                      onPressed: saveMovement,
                       child: const Text('Guardar'),
                     ),
                   ),
