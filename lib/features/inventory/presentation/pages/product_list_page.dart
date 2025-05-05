@@ -92,6 +92,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'add_product_hero',
         onPressed: () => _showProductForm(),
         child: const Icon(Icons.add),
       ),

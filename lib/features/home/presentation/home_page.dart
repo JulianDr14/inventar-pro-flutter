@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intentary_pro/features/inventory/presentation/pages/product_list_page.dart';
+import 'package:intentary_pro/features/movements/presentation/pages/movements_list_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,9 +20,9 @@ class _HomePageState extends State<HomePage> {
       page: ProductListPage(),
     ),
     _NavItem(
-      title: 'Prueba',
+      title: 'Ordenes',
       icon: Icons.settings,
-      page: Center(child: Text('Prueba')),
+      page: MovementsListPage(),
     ),
   ];
 

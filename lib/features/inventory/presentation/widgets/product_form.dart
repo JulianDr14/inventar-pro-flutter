@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intentary_pro/features/inventory/domain/entities/product.dart';
 import 'package:intentary_pro/core/services/snackbar_service.dart';
 
@@ -54,19 +55,19 @@ class _ProductFormState extends ConsumerState<ProductForm> {
 
     await widget.onSave(id: id, name: name, quantity: qty);
 
-    if (!context.mounted) return;
+    if (!mounted) return;
     SnackbarService.show(
       context,
       message: widget.product == null
           ? 'Producto agregado'
           : 'Producto actualizado',
     );
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.product != null;
+    final bool isEdit = widget.product != null;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
